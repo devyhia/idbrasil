@@ -1,0 +1,24 @@
+<% if notice %>
+<div class="alert alert-info" id="notice"><%= notice %></div>
+<% end %>
+
+<legend><%= @customer.name %></legend>
+
+<p>
+  <b>Cpf:</b>
+  <%= @customer.cpf %>
+</p>
+
+<p>
+  <b>Email:</b>
+  <%= @customer.email %>
+</p>
+
+<p>
+  <b>Phone:</b>
+  <%= @customer.phone %>
+</p>
+
+
+<%= link_to 'Edit', edit_customer_path(@customer), :class=>"btn btn-primary" %>
+<%= link_to 'Back', customers_path, :class=>"btn" %>

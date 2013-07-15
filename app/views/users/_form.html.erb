@@ -1,0 +1,36 @@
+<% if !(@user) %>
+<% @user = User.new %>
+<% end %>
+<%= form_for(@user) do |f| %>
+  <% if @user.errors.any? %>
+    <div id="error_explanation alert alert-error">
+      <h2><%= pluralize(@user.errors.count, "error") %> prohibited this user from being saved:</h2>
+
+      <ul>
+      <% @user.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :username %>
+    <%= f.text_field :username %>
+  </div>
+  <div class="field">
+    <%= f.label :password %>
+    <%= f.text_field :password %>
+  </div>
+  <div class="field">
+    <%= f.label :rights %>
+    <select name="user[rights]">
+		  <% for option in ["User", "Admin"] %>
+		  <option <%= option == @user.rights ? "selected" : "" %>><%= option %></option>
+		  <% end %>
+	</select>
+  </div>
+  <div class="actions">
+    <button type="submit" class="btn btn-success">Save</button>
+  </div>
+<% end %>

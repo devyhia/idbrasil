@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>ID Brasil</title>
+		<%= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" %>
+		<%= javascript_include_tag "application" %>
+		<%= stylesheet_link_tag    "bootstrap.min", :media => "all" %>
+		<%= stylesheet_link_tag    "bootstrap-responsive.min", :media => "all" %>
+		<%= javascript_include_tag "bootstrap.min" %>
+		<%= csrf_meta_tags %>
+		<style>
+			.user-box {
+				float:right;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="navbar navbar-fixed-top">
+			<div class="navbar-inner">
+				<div class="container">
+					<div class="nav-collapse collapse user-box" id="main-menu">
+						<ul class="nav" id="main-menu-left ">
+							<li>
+								<a>Welcome <b><%= session[:username] %></b></a>
+							</li>
+							<li>
+								<%= link_to "Logout", "/logout" %>
+							</li>
+						</ul>
+					</div>					
+					<div class="nav-collapse collapse" id="main-menu">
+						<ul class="nav" id="main-menu-left">
+							<li>
+								<a href="/"><img style="max-height: 25px;" src="http://www.idbrasil.com/images/logo.gif" /></a>
+							</li>
+							<li>
+								<a href="/users">Users</a>
+							</li>
+							<li>
+								<a href="/products">Products</a>
+							</li>
+							<li>
+								<a href="/customers">Customers</a>
+							</li>
+							<li>
+								<a href="/budgets">Budgets</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="row" style="margin-top: 4em;">
+				<div class="span12">
+					<%= yield %>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

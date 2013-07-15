@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>ID Brasil</title>
+		<%= javascript_include_tag "http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js" %>
+		<%= stylesheet_link_tag    "bootstrap.min", :media => "all" %>
+		<%= stylesheet_link_tag    "bootstrap-responsive.min", :media => "all" %>
+		<%= javascript_include_tag "bootstrap.min" %>
+		<%= csrf_meta_tags %>
+		<style>
+			.box
+			{
+				width: 400px;
+				padding:2em;
+				margin: 100px auto;
+				overflow: hidden;
+				-webkit-box-shadow: 0px 0px 11px 1px rgba(0, 0, 0, 0.15);
+				-moz-box-shadow: 0px 0px 11px 1px rgba(0, 0, 0, 0.15);
+				box-shadow: 0px 0px 11px 1px rgba(0, 0, 0, 0.15);
+			}
+		</style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="box">
+				<%= yield %>
+				<% if params[:controller] == "errors" %>
+				<center><%= link_to "Back to Home", "/", :class=> "btn", :style=>"margin-top:1em;" %></center>
+				<% end %>
+			</div>
+			
+			<div class="span12">
+				<h1>ID Brasil Application</h1>
+				<legend>Technology Stack</legend>
+				<div class="row">
+					<div class="span12">
+					<b>Programming Languages</b>
+					<ul>
+						<li>Ruby on Rails</li>
+						<li>T-SQL</li>
+					</ul>
+					<b>Database</b>
+					<ul>
+						<li>PostgreSql</li>
+					</ul>
+					<b>Server & Hosting</b>
+					<ul>
+						<li>Windows Server 2008R2 VPS</li>
+						<li>Thin - a small and fast ruby web server</li>
+					</ul>
+					<b>Front-End Development</b>
+					<ul>
+						<li>Javascript</li>
+						<li>JQuery</li>
+						<li>JSON Ruby-Based API</li>
+					</ul>
+					<b>Design</b>
+					<ul>
+						<li>CSS</li>
+						<li>Twitter Bootstrap</li>
+					</ul>
+					</div>
+				</div>
+				
+				<legend>Database Design</legend>
+				<%= image_tag "db-design.png" %>
+				
+				<legend>
+					Inquiries
+				</legend> 
+				In case of any problems or inquiries, please send me an email on : <b>yehia@devrok.com</b>, or contact me at: (+20) 010 9327-8163.
+				<footer>
+					<hr/>
+					<center>Made with ♥ at <b>The American University in Cairo</b>, by <b>Yehia Abo El-Nga</b></center>
+					<br/>
+				</footer>
+				
+			</div> 
+		</div>
+	</body>
+</html>

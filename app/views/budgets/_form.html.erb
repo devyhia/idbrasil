@@ -1,0 +1,341 @@
+<style>
+	.small-box {
+		width: 135px;
+	}
+	.middle {
+		line-height: 2.5em;
+		vertical-align: middle;
+	}
+
+	.middle input {
+		margin: 0 auto;
+	}
+	.marginalize {
+		margin-bottom: 1em;
+		margin-top: 1em;
+	}
+	
+	#new_budget_product div {
+		text-align: center;
+	}
+	
+	#new_budget_product label
+	{
+		margin-top:0.25em;
+		color: #006DCC;
+		font-size: xx-large;
+	}
+</style>
+<%= form_for(@budget) do |f| %>
+<% if @budget.errors.any? %>
+<div id="error_explanation">
+	<h2><%= pluralize(@budget.errors.count, "error") %> prohibited this budget from being saved:</h2>
+
+	<ul>
+		<% @budget.errors.full_messages.each do |msg| %>
+		<li>
+			<%= msg %>
+		</li>
+		<% end %>
+	</ul>
+</div>
+<% end %>
+<hr/>
+<input type="hidden" value="<%= @budget.id %>" id="budget-id" />
+<div class="middle marginalize">
+	<b>Customer: </b>
+	<input type="text" id="Customer" name="Customer" value="<%= @customer.name %>" />
+</div>
+<div id="customer-data" class="alert alert-info" style="display: <%= @customer.id ? "block" : "none" %>">
+	<input type="hidden" id="customer-id" value="<%= @customer.id ? @customer.id : "" %>"/>
+	<h2 id="customer-name"><%= @customer.name %></h2>
+	CPF : <span id="customer-cpf"><%= @customer.cpf %></span>
+	<br/>
+	Email : <span id="customer-email"><%= @customer.email %></span>
+	<br/>
+	Phone : <span id="customer-phone"><%= @customer.phone %></span>
+</div>
+
+<legend>
+	Products List
+</legend>
+<div id="new_budget_product" class="alert alert-block middle">
+	<b>Product: </b>&nbsp;
+	<input type="hidden" id="productID" />
+	<input type="text" id="productName" name="productName" placeholder="Name"/>
+	<input type="text" readonly id="price" name="price" placeholder="Price" class="small-box" />
+	<input type="text" id="quantity" name="quantity" placeholder="Quantity" class="small-box"/>
+	<input type="text" readonly id="value" name="value" placeholder="Value" class="small-box"/>
+	<input type="text" id="discount" name="discount" placeholder="Discount" class="small-box"/>
+	<input type="text" id="total" name="total" placeholder="Total" class="small-box"/>
+	<button class="btn btn-primary" id="btnAdd" type="button">
+		Add
+	</button>
+</div>
+<table id="products" class="table table-bordered table-headed table-hover">
+	<tr>
+		<th>Name</th><th>Price</th><th>Quantity</th><th>Value</th><th>Discount</th><th>Total</th>
+	</tr>
+	<% if @budgetProducts %>
+	<% @budgetProducts.each do |product| %>
+	<tr>
+		<input class='id' type='hidden' value='<%= product.product_id %>'>
+		<td class="name"><%= product.name %></td>
+		<td class="price"><%= product.price %></td>
+		<td class="quantity"><%= product.quantity %></td>
+		<td class="value"><%= product.value %></td>
+		<td class="discount"><%= product.discount %></td>
+		<td class="total"><%= product.total %></td>
+	</tr>
+	<% end %>
+	<% end %>
+</table>
+
+
+	<legend>
+		Totalizers
+	</legend>
+<div id="new_budget_product" class="row">
+	<div class="span3"><b>Total Amount</b> <label id="total-amount"><%= @budget.total_amount != nil ? @budget.total_amount : 0 %></label></div>
+	<div class="span3"><b>Total Value</b> <label id="total-value"><%= @budget.total_value != nil ? @budget.total_value : 0 %></label></div>
+	<div class="span3"><b>Total Discount</b> <label id="total-discount"><%= @budget.total_discount != nil ? @budget.total_discount : 0 %></label></div>
+	<div class="span3"><b>Total Budget</b> <label id="total-budget"><%= @budget.total_budget != nil ? @budget.total_budget : 0 %></label></div>
+</div>
+<div class="actions">
+	<button type="button" onclick="save_budget()" class="btn btn-success">
+		Save
+	</button>
+</div>
+<% end %>
+<script>
+	function extractor(query) {
+		var result = /([^,]+)$/.exec(query);
+		if (result && result[1])
+			return result[1].trim();
+		return '';
+	}
+
+
+	$('#Customer').typeahead({
+		source : function(query, process) {
+			return $.get('/api/get_customers.json', {
+				q : query
+			}, function(data) {
+				return process(get_arr(data));
+			});
+		},
+		matcher : function(item) {
+			var tquery = extractor(this.query);
+			if (!tquery)
+				return false;
+			return ~item.toLowerCase().indexOf(tquery.toLowerCase())
+		},
+		highlighter : function(item) {
+			var query = extractor(this.query).replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
+			return item.replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
+				return '<strong>' + match + '</strong>'
+			})
+		}
+	});
+	$('#productName').typeahead({
+		source : function(query, process) {
+			return $.get('/api/get_products.json', {
+				q : query
+			}, function(data) {
+				return process(get_arr(data));
+			});
+		},
+		matcher : function(item) {
+			var tquery = extractor(this.query);
+			if (!tquery)
+				return false;
+			return ~item.toLowerCase().indexOf(tquery.toLowerCase())
+		},
+		highlighter : function(item) {
+			var query = extractor(this.query).replace(/[\-\[\]{}()*+?.,\\\^$|#\s]/g, '\\$&')
+			return item.replace(new RegExp('(' + query + ')', 'ig'), function($1, match) {
+				return '<strong>' + match + '</strong>'
+			})
+		}
+	});
+	function get_arr(data) {
+		var arr = new Array();
+		var i = -1;
+		while (data[++i] != undefined) {
+			//arr[i] += (i ? "," : "") + " \"" + data[i].name + " ( "+data[i].cpf+" )\"";
+			arr[i] = data[i].name;
+		}
+		return arr;
+	}
+
+
+	$("#Customer").keyup(function(e) {
+		if (e.which == 13)// enter key
+		{
+			var name = $(this).val();
+			$.get("/api/get_customer.json?name=" + name, function(data) {
+					var cust = data;
+					$("#customer-id").val(cust.id);
+					$("#customer-name").html(cust.name);
+					$("#customer-cpf").html(cust.cpf);
+					$("#customer-phone").html(cust.phone);
+					$("#customer-email").html(cust.email);
+					$("#customer-undefined").hide();
+					$("#customer-data").slideDown();
+					
+					$("#productName").focus();
+			});
+		}
+	});
+	 
+	$("#productName").keyup(function(e) {
+		if (e.which == 13)// enter key
+		{
+			var name = $(this).val();
+			$.get("/api/get_product.json?name=" + name, function(data) {
+					$("#productID").val(data.id);
+					$("#price").val(data.cost);
+					$("#quantity").val(1);
+					$("#value").val(data.cost);
+					$("#discount").val(0);
+					$("#total").val(data.cost);
+					$("#quantity").focus();
+					$("#quantity").tooltip({title:"Quantity"});
+			});
+		}
+	});
+	
+	function totalize()
+	{
+		var price = $("#price").val();
+		var quantity = $("#quantity").val();
+		var discount = $("#discount").val();
+		var digit = /\d+(\.\d+)?/;
+		if (!digit.test(quantity))
+		{
+			$("#quantity").val(1);
+			quantity = 1;
+		}
+			
+		if (!digit.test(discount))
+		{
+			$("#discount").val(1);
+			discount = 1;
+		}
+			
+		var value = parseFloat(price) * parseFloat(quantity);
+		var total = value - parseFloat(discount);
+				
+		$("#value").val(value);
+		$("#total").val(total);	
+	}
+	
+	$("#quantity").keyup(function(e) {
+		if (e.which == 13)// enter key
+		{
+			totalize();
+			$("#discount").focus();
+		}
+	});
+	
+	$("#discount").keyup(function(e) {
+		if (e.which == 13)// enter key
+		{
+			totalize();
+			$("#btnAdd").focus();
+		}
+	});
+	
+	function empty()
+	{
+		$("#productName").val("");
+		$("#price").val("");
+		$("#quantity").val("");
+		$("#value").val("");
+		$("#discount").val("");
+		$("#total").val("");
+		
+		$("#productName").focus();
+	}
+	
+	$("#btnAdd").click(function(){
+		var total_amount = $("#total-amount").text();
+		var total_value = $("#total-value").text();
+		var total_discount = $("#total-discount").text();
+		var total_budget = $("#total-budget").text();
+		
+		totalize();
+		
+		var price = $("#price").val();
+		var quantity = $("#quantity").val();
+		var value = $("#value").val();
+		var discount = $("#discount").val();
+		var total = $("#total").val();
+		
+		total_amount = parseFloat(total_amount) + parseFloat(quantity);
+		total_value = parseFloat(total_value) + parseFloat(value);
+		total_discount = parseFloat(total_discount) + parseFloat(discount);
+		total_budget = parseFloat(total_budget) + parseFloat(total);
+		
+		var row = "<tr><input class='id' type='hidden' value='"+$("#productID").val()+"' />"+
+		"<td class='name'>"+ $("#productName").val() +"</td>" +
+		"<td class='price'>"+ price +"</td>" +
+		"<td class='quantity'>"+ quantity +"</td>" + 
+		"<td class='value'>"+ value +"</td>" +
+		"<td class='discount'>"+ discount +"</td>" +
+		"<td class='total'>"+ total +"</td>"+
+		"</tr>";
+		
+		$("#products").append(row);
+		
+		$("#total-amount").html(total_amount);
+		$("#total-value").html(total_value);
+		$("#total-discount").html(total_discount);
+		$("#total-budget").html(total_budget);
+		
+		empty();
+	});
+</script>
+<script>
+	function save_budget()
+	{
+		$("#save").modal();
+		var budget = new Object();
+		
+		budget.customer = $("#customer-id").val();
+		budget.total_amount = $("#total-amount").text();
+		budget.total_value = $("#total-value").text();
+		budget.total_discount = $("#total-discount").text();
+		budget.total_budget = $("#total-budget").text();
+		budget.id = $("#budget-id").val();
+		
+		budget.products = new Array();
+		var idx = 0;
+		$("#products").find("tr").each(function(index){
+			if(index)
+			{
+				budget.products[idx] = new Object();
+				budget.products[idx].id = $(this).find(".id").val();
+				budget.products[idx].name = $(this).find(".name").text();
+				budget.products[idx].price = $(this).find(".price").text();
+				budget.products[idx].quantity = $(this).find(".quantity").text();
+				budget.products[idx].value = $(this).find(".value").text();
+				budget.products[idx].discount = $(this).find(".discount").text();
+				budget.products[idx].total = $(this).find(".total").text();
+				idx++;
+			}
+		});
+		
+		var json = JSON.stringify(budget);
+		$.post("/api/save_budget", {budget: json }, function(data){
+			$("#save .modal-body").html("<center><h1>Saved</h1></center>");
+			window.location = "/budgets";
+		});
+	}
+</script>
+<div id="save" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <div class="modal-body">
+    <center><%= image_tag "loading.gif" %></center>	
+    </div>
+</div>

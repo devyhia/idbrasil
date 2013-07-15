@@ -1,0 +1,84 @@
+<style>
+@media print
+{
+	input, button, .btn, .navbar 
+	{
+		display: none;
+	}	
+	.container, body, html { padding:none; margin:none; }
+	
+}
+	.small-box {
+		width: 135px;
+	}
+	.middle {
+		line-height: 2.5em;
+		vertical-align: middle;
+	}
+
+	.middle input {
+		margin: 0 auto;
+	}
+	.marginalize {
+		margin-bottom: 1em;
+		margin-top: 1em;
+	}
+	
+	#new_budget_product div {
+		text-align: center;
+	}
+	
+	#new_budget_product label
+	{
+		margin-top:0.25em;
+		color: #006DCC;
+		font-size: xx-large;
+	}
+</style>
+<div style="float:right;" class="right"><a class="btn btn-large" onclick="window.print()"><i class="icon-print"></i> Print</a></div>
+<div id="report">
+<h1>Budget # <%= @budget.id %></h1>
+
+<legend><%= @customer.name %></legend>
+<b>CPF :</b> <span><%= @customer.cpf %></span>
+<br/>
+<b>Email :</b> <span><%= @customer.email %></span>
+<br/>
+<b>Phone :</b> <span><%= @customer.phone %></span>
+<br/><br/>
+<legend>
+	Products List
+</legend>
+<table id="products" class="table table-bordered table-headed table-hover">
+	<tr>
+		<th>Name</th><th>Price</th><th>Quantity</th><th>Value</th><th>Discount</th><th>Total</th>
+	</tr>
+	<% if @budgetProducts %>
+	<% @budgetProducts.each do |product| %>
+	<tr>
+		<input class='id' type='hidden' value='<%= product.id %>'>
+		<td class="name"><%= product.name %></td>
+		<td class="price"><%= product.price %></td>
+		<td class="quantity"><%= product.quantity %></td>
+		<td class="value"><%= product.value %></td>
+		<td class="discount"><%= product.discount %></td>
+		<td class="total"><%= product.total %></td>
+	</tr>
+	<% end %>
+	<% end %>
+</table>
+
+
+	<legend>
+		Totalizers
+	</legend>
+<div id="new_budget_product" class="row">
+	<div class="span3"><b>Total Amount</b> <label id="total-amount"><%= @budget.total_amount != nil ? @budget.total_amount : 0 %></label></div>
+	<div class="span3"><b>Total Value</b> <label id="total-value"><%= @budget.total_value != nil ? @budget.total_value : 0 %></label></div>
+	<div class="span3"><b>Total Discount</b> <label id="total-discount"><%= @budget.total_discount != nil ? @budget.total_discount : 0 %></label></div>
+	<div class="span3"><b>Total Budget</b> <label id="total-budget"><%= @budget.total_budget != nil ? @budget.total_budget : 0 %></label></div>
+</div>
+</div>
+<br/>
+<%= link_to 'Edit', edit_budget_path(@budget),  :class => "btn btn-primary"%>
+<%= link_to 'Back', budgets_path , :class => "btn" %>

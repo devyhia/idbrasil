@@ -1,0 +1,45 @@
+<h1>Products</h1>
+
+<table class="table table-bordered table-headed table-hover">
+  <tr>
+    <th>Name</th>
+    <th>Description</th>
+    <th>Cost</th>
+    <th>Profit</th>
+    <th>Forsale</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @products.each do |product| %>
+  <tr>
+    <td><%= product.name %></td>
+    <td><%= product.description %></td>
+    <td><%= product.cost %></td>
+    <td><%= product.profit %></td>
+    <td><%= product.forsale %></td>
+    <td><%= link_to 'Show', product %></td>
+    <td><%= link_to 'Edit', edit_product_path(product) %></td>
+    <td><%= link_to 'Destroy', product, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New Product', "#", :class=> "btn", :onclick => "new_product()" %>
+<script>
+	function new_product()
+	{
+		$("#new-product").find(".modal-body").html('<%= image_tag 'loading.gif' %>');
+		$("#new-product").modal();
+		$("#new-product").find(".modal-body").load("/products/new");
+	}
+</script>
+<div id="new-product" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+    <div class="modal-body">
+    	
+    </div>
+</div>

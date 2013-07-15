@@ -1,0 +1,53 @@
+<script>
+	function submit_form()
+	{
+		var reg = /^\d{3}\.\d{3}\.\d{3}-\d{2}$/;
+		var cpf = $("#customer_cpf").val();
+		if(cpf == undefined || cpf == "")
+		{
+			alert("Make sure that You submitted Customer's CPF !");
+		}
+		else if(!reg.test(cpf))
+		{
+			alert("Please enter a valid CPF \ni.e. '555.555.555-55'");
+		}
+		else 
+		{
+			var form = $("form");
+			form.submit();
+		}
+	}
+</script>
+<%= form_for(@customer) do |f| %>
+  <% if @customer.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@customer.errors.count, "error") %> prohibited this customer from being saved:</h2>
+
+      <ul>
+      <% @customer.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :name %>
+    <%= f.text_field :name %>
+  </div>
+  <div class="field">
+    <%= f.label :cpf %>
+    <%= f.text_field :cpf %>
+  </div>
+  <div class="field">
+    <%= f.label :email %>
+    <%= f.text_field :email %>
+  </div>
+  <div class="field">
+    <%= f.label :phone %>
+    <%= f.text_field :phone %>
+  </div>
+  <div class="actions">
+    <button type="button" onclick="submit_form()" class="btn btn-success">Save</button>
+  </div>
+<% end %>

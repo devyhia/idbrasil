@@ -1,0 +1,30 @@
+<h1>Budgets</h1>
+
+<table class="table table-bordered table-headed table-hover">
+  <tr>
+  	<th>Code</th>
+    <th>Customer</th>
+    <th>Total amount</th>
+    <th>Total value</th>
+    <th>Total discount</th>
+    <th>Total budget</th>
+    <th></th>
+    <th></th>
+    <th></th>
+  </tr>
+
+<% @budgets.each do |budget| %>
+  <tr>
+  	<td><%= budget.id %></td>
+    <td><%= budget.customer %></td>
+    <td><%= budget.total_amount %></td>
+    <td><%= budget.total_value %></td>
+    <td><%= budget.total_discount %></td>
+    <td><%= budget.total_budget %></td>
+    <td><%= link_to 'Show', budget %></td>
+    <td><%= link_to 'Edit', edit_budget_path(budget) %></td>
+    <td><%= link_to 'Destroy', budget, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+  </tr>
+<% end %>
+</table>
+<%= link_to 'New Budget', new_budget_path, :class => "btn" %>

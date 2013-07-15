@@ -1,0 +1,29 @@
+<% if notice %>
+<p id="notice alert alert-info"><%= notice %></p>
+<% end %>
+
+<legend><%= @product.name %></legend>
+
+<p>
+  <b>Description:</b>
+  <%= @product.description %>
+</p>
+
+<p>
+  <b>Cost:</b>
+  <%= @product.cost %>
+</p>
+
+<p>
+  <b>Profit:</b>
+  <%= @product.profit %>
+</p>
+
+<p>
+  <b>Forsale:</b>
+  <%= @product.forsale %>
+</p>
+
+
+<%= link_to 'Edit', edit_product_path(@product), :class => "btn btn-primary" %>
+<%= link_to 'Back', products_path, :class=> "btn" %>
